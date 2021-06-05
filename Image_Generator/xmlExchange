@@ -1,0 +1,200 @@
+from xml.dom.minidom import Document
+import os
+import os.path
+from PIL import Image
+
+#ann_path = "E:\\毕业设计\\模型储存\\Pikachu_trainal\\Annotations\\"
+img_path = "E:\\毕业设计\\模型储存\\mutiple_trainal\\JPEGImages\\"
+xml_path = "E:\\毕业设计\\模型储存\\mutiple_trainal\\Annotations\\"
+
+if not os.path.exists(xml_path):
+    os.mkdir(xml_path)
+
+
+def writeXml(tmp, imgname, w, h, in_xmin, in_ymin, in_xmax, in_ymax, wxml, modeltype):
+    doc = Document()
+    # owner
+    annotation = doc.createElement('annotation')
+    doc.appendChild(annotation)
+    # owner
+    folder = doc.createElement('folder')
+    annotation.appendChild(folder)
+    folder_txt = doc.createTextNode("VOC2007")
+    folder.appendChild(folder_txt)
+
+    filename = doc.createElement('filename')
+    annotation.appendChild(filename)
+    filename_txt = doc.createTextNode(imgname)
+    filename.appendChild(filename_txt)
+    # ones#
+    source = doc.createElement('source')
+    annotation.appendChild(source)
+
+    database = doc.createElement('database')
+    source.appendChild(database)
+    database_txt = doc.createTextNode("The VOC2007 Database")
+    database.appendChild(database_txt)
+
+    annotation_new = doc.createElement('annotation')
+    source.appendChild(annotation_new)
+    annotation_new_txt = doc.createTextNode("PASCAL VOC2007")
+    annotation_new.appendChild(annotation_new_txt)
+
+    image = doc.createElement('image')
+    source.appendChild(image)
+    image_txt = doc.createTextNode("flickr")
+    image.appendChild(image_txt)
+
+    flickrid =doc.createElement('flickrid')
+    source.appendChild(flickrid)
+    flickrid_txt = doc.createTextNode("101010101")
+    flickrid.appendChild(flickrid_txt)
+    # onee#
+
+    owner = doc.createElement('owner')
+    annotation.appendChild(owner)
+
+    flickrid = doc.createElement('flickrid')
+    owner.appendChild(flickrid)
+    flickrid_txt = doc.createTextNode(modeltype)
+    flickrid.appendChild(flickrid_txt)
+
+    name = doc.createElement('name')
+    owner.appendChild(name)
+    name_txt = doc.createTextNode("Luxem")
+    name.appendChild(name_txt)
+
+    # twos#
+    size = doc.createElement('size')
+    annotation.appendChild(size)
+
+    width = doc.createElement('width')
+    size.appendChild(width)
+    width_txt = doc.createTextNode(str(w))
+    width.appendChild(width_txt)
+
+    height = doc.createElement('height')
+    size.appendChild(height)
+    height_txt = doc.createTextNode(str(h))
+    height.appendChild(height_txt)
+
+    depth = doc.createElement('depth')
+    size.appendChild(depth)
+    depth_txt = doc.createTextNode("3")
+    depth.appendChild(depth_txt)
+
+    # twoe#
+    segmented = doc.createElement('segmented')
+    annotation.appendChild(segmented)
+    segmented_txt = doc.createTextNode("0")
+    segmented.appendChild(segmented_txt)
+
+    # threes#
+    object = doc.createElement("object")
+    annotation.appendChild(object)
+
+    name = doc.createElement('name')
+    object.appendChild(name)
+    name_txt = doc.createTextNode(modeltype)
+    name.appendChild(name_txt)
+
+    pose = doc.createElement('pose')
+    object.appendChild(pose)
+    pose_txt = doc.createTextNode("Unspecified")
+    pose.appendChild(pose_txt)
+
+    truncated = doc.createElement('truncated')
+    object.appendChild(truncated)
+    truncated_txt = doc.createTextNode("0")
+    truncated.appendChild(truncated_txt)
+
+    difficult = doc.createElement('difficult')
+    object.appendChild(difficult)
+    difficult_txt = doc.createTextNode("0")
+    difficult.appendChild(difficult_txt)
+    # threes-1#
+    bndbox = doc.createElement('bndbox')
+    object.appendChild(bndbox)
+
+    xmin = doc.createElement('xmin')
+    bndbox.appendChild(xmin)
+    xmin_txt = doc.createTextNode(str(in_xmin))
+    xmin.appendChild(xmin_txt)
+
+    ymin = doc.createElement('ymin')
+    bndbox.appendChild(ymin)
+    ymin_txt = doc.createTextNode(str(in_ymin))
+    ymin.appendChild(ymin_txt)
+
+    xmax = doc.createElement('xmax')
+    bndbox.appendChild(xmax)
+    xmax_txt = doc.createTextNode(str(in_xmax))
+    xmax.appendChild(xmax_txt)
+
+    ymax = doc.createElement('ymax')
+    bndbox.appendChild(ymax)
+    ymax_txt = doc.createTextNode(str(in_ymax))
+    ymax.appendChild(ymax_txt)
+    # threee-1#
+    # threes#
+    tempfile = tmp + ".xml"
+    with open(tempfile, "wb+") as f:
+        f.write(doc.toprettyxml(indent="\t", encoding="utf-8"))
+
+    rewrite = open(tempfile, 'r')
+    lines = rewrite.read().split("\n")
+    newlines = lines[1:len(lines) - 1]
+
+    fw = open(wxml, "w+")
+    for i in range(0, len(newlines)):
+        fw.write(newlines[i] + "\n")
+
+    fw.close()
+    rewrite.close()
+    os.remove(tempfile)
+    return
+
+
+temp = "C:\\temp\\"
+f = open("E:\\毕业设计\\模型储存\\label.txt")
+line = f.readline()
+while line:
+    ele = line.split()#get strings
+   # print(ele[0]+" , "+ele[1]+" , "+ele[2]+" , "+ele[3])
+    img_name = ele[0]
+    #print(img_name)
+    modeltype = ele[1]
+    fileimgpath = img_path + img_name
+    im = Image.open(fileimgpath)
+    img_width = int(im.size[0])  ##get image kuan
+    img_height = int(im.size[1])  ##get image gao
+#    print(img_width, img_height)
+
+#    print (ele[0].strip('.jpg'))
+
+    filename = xml_path + img_name.strip(".jpg") + ".xml"
+    writeXml(temp, img_name, img_width, img_height, int(ele[2]), int(ele[3]), int(ele[4]), int(ele[5]), filename, modeltype)
+    line = f.readline()
+f.close()
+"""
+for files in os.walk(ann_path):
+    temp = "C:\\temp\\"
+    if not os.path.exists(temp):
+        os.mkdir(temp)
+    for file in files[2]:
+        print
+        file + "-->start!"
+        img_name = os.path.splitext(file)[0] + '.jpg'
+        fileimgpath = img_path + img_name
+        im = Image.open(fileimgpath)
+        width = int(im.size[0])     ##get image kuan
+        height = int(im.size[1])    ##get image gao
+
+        filelabel = open(ann_path + file, "r")
+        lines = filelabel.read().split('\n')
+        obj = lines[:len(lines) - 1]
+
+        filename = xml_path + os.path.splitext(file)[0] + '.xml'
+        writeXml(temp, img_name, width, height, obj, filename)
+    os.rmdir(temp)
+   """
