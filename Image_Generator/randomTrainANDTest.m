@@ -1,25 +1,17 @@
-%%  
-%该代码根据已生成的xml，制作VOC2007数据集中的trainval.txt;train.txt;test.txt和val.txt  
-%trainval占总数据集的50%，test占总数据集的50%；train占trainval的50%，val占trainval的50%；  
-%上面所占百分比可根据自己的数据集修改，如果数据集比较少，test和val可少一些  
-%%  
-%注意修改下面四个值  
-xmlfilepath='E:\毕业设计\模型储存\mutiple_trainal\Annotations';  
-txtsavepath='E:\毕业设计\模型储存\mutiple_trainal\ImageSets\Main\';  
-trainval_percent=0.6;%trainval占整个数据集的百分比，剩下部分就是test所占百分比  
-train_percent=0.6;%train占trainval的百分比，剩下部分就是val所占百分比  
+xmlfilepath='E:mutiple_trainal\Annotations';  
+txtsavepath='E:mutiple_trainal\ImageSets\Main\';  
+trainval_percent=0.6;
+train_percent=0.6;
   
-  
-%%  
 xmlfile=dir(xmlfilepath);  
-numOfxml=length(xmlfile)-2;%减去.和..  总的数据集大小  
+numOfxml=length(xmlfile)-2;
   
   
 trainval=sort(randperm(numOfxml,floor(numOfxml*trainval_percent)));  
 test=sort(setdiff(1:numOfxml,trainval));  
   
   
-trainvalsize=length(trainval);%trainval的大小  
+trainvalsize=length(trainval);
 train=sort(trainval(randperm(trainvalsize,floor(trainvalsize*train_percent))));  
 val=sort(setdiff(trainval,train));  
   
