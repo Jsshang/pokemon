@@ -6,7 +6,7 @@ BackNum=100;
 for m = 1:BackNum
    for n = 1:ModelNum
   
-[imgModel, map, alpha]  = imread(['E:/毕业设计/模型储存/model/' num2str(n) '.png']); %num2str
+[imgModel, map, alpha]  = imread(['E:/model/' num2str(n) '.png']); %num2str
 [i, j] = find(alpha>0);
 iMin = min(i);
 iMax = max(i);
@@ -16,8 +16,7 @@ alpha = im2uint8(alpha(iMin:iMax, jMin:jMax));
 imgModel = im2uint8(imgModel(iMin:iMax, jMin:jMax, :));
 
 
-imgBG = imread(['E:/毕业设计/模型储存/back/' int2str(m) '.jpg']);
-%imgBG = imread('E:/毕业设计/模型储存/background/19.jpg');
+imgBG = imread(['E:/back/' int2str(m) '.jpg']);
 
 sizeBG = size(imgBG);
 sizeModel = size(imgModel);
@@ -43,14 +42,12 @@ coord = [((m-1)*ModelNum+n) xy sizeModelScale]; % be careful, x y and row col
 
 window = [window; coord];
 
-%imwrite( imgBG , ['E:/毕业设计/模型储存/result/' num2str(n) '.jpg']);
-imwrite( imgBG , ['E:/毕业设计/模型储存/mutiple_trainal/JPEGImages/' num2str((m-1)*ModelNum+n) '.jpg']);
+imwrite( imgBG , ['E:/mutiple_trainal/JPEGImages/' num2str((m-1)*ModelNum+n) '.jpg']);
     end
 end
 
-%save 'E:/毕业设计/模型储存/flag.txt' window ;
 
-fid=fopen('E:/毕业设计/模型储存/label.txt','A');
+fid=fopen('E:/label.txt','A');
 [m,n]=size(window);
 for i = 1:m 
    if rem(window(i,1),ModelNum)<=10 && rem(window(i,1),ModelNum)>=1
@@ -72,4 +69,3 @@ end
 
 
 fclose(fid);
-%imwirite;
